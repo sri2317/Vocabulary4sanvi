@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        /* --- Styles same as before --- */
         :root { --p: #6366f1; --bg: #f0f4ff; --card: #ffffff; --txt: #1e293b; --mt: #34d399; --err: #fb7185; --border: #e2e8f0; --exam: #9333ea; }
         body { font-family: 'Lexend', sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; justify-content: center; color: var(--txt); }
         .card { background: var(--card); padding: 1.5rem; border-radius: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 950px; position: relative; }
@@ -37,96 +38,8 @@
 <div id="correctAnim" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:3rem; pointer-events:none; opacity:0; z-index:1000; font-weight:800; color:#059669; text-shadow:2px 2px white;">✅ AMAZING!</div>
 
 <div class="card">
-    <div id="home-screen" class="screen active">
-        <h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>
-        <label>Student Name</label>
-        <input type="text" id="studentName" placeholder="Enter student name...">
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>Select List</label><select id="yearSelect"></select></div>
-            <div><label>Time Limit</label>
-                <select id="timeLimitSelect">
-                    <option value="60">1 Min</option>
-                    <option value="120">2 Mins</option>
-                    <option value="300" selected>5 Mins</option>
-                    <option value="900">15 Mins</option>
-                    <option value="1200">20 Mins</option>
-                </select>
-            </div>
-        </div>
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top:20px;">
-            <button class="btn btn-m" onclick="startSession('practice')">📖 Practice</button>
-            <button class="btn btn-p" onclick="startSession('quiz')">🏆 Quiz</button>
-            <button class="btn btn-exam" onclick="startSession('exam')">🎓 Exam</button>
-        </div>
-        <button class="btn" style="background:#f1f5f9; margin-top:15px;" onclick="showAdmin()">Admin Dashboard ⚙️</button>
-    </div>
-
-    <div id="game-screen" class="screen">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-            <button class="btn btn-del" onclick="backToHome()">EXIT</button>
-            <div id="timerText" style="font-weight:bold; font-size: 1.1rem;">⏱ 00:00</div>
-        </div>
-        <div class="progress-container" id="progCont"><div class="progress-bar" id="progBar"></div></div>
-        <div class="masked-word" id="wordDisplay"></div>
-        <div id="sentenceDisplay"></div>
-        <input type="text" id="gameInput" placeholder="Type here..." autocomplete="off" style="text-align:center; font-size:2rem; margin-top:15px;">
-        
-        <div id="exam-controls" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:10px;">
-            <button class="btn" style="background:#cbd5e1;" onclick="processExamNext(true)">⏭ Skip</button>
-            <button class="btn btn-exam" onclick="processExamNext(false)">Next Word ➔</button>
-        </div>
-
-        <div id="quiz-controls" style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn btn-p" id="speakBtn" onclick="speakWord()" style="flex:2">🔊 Hear Word</button>
-            <button class="btn" style="flex:1; background:#fef3c7; color:#92400e;" onclick="showHint()">Hint 💡</button>
-        </div>
-    </div>
-
-    <div id="result-screen" class="screen" style="text-align:center">
-        <h2 id="resultTitle">Session Complete! 🎉</h2>
-        <div style="font-size: 4rem; margin: 10px 0; font-weight: 800; color: var(--p);" id="resultScore">0</div>
-        <div id="examSummary" style="text-align:left; padding:15px; background:#f8fafc; border-radius:1rem; max-height:200px; overflow-y:auto; display:none;"></div>
-        <button class="btn btn-p" style="margin-top:20px" onclick="backToHome()">Take Another Session</button>
-    </div>
-
-    <div id="admin-screen" class="screen">
-        <button class="btn btn-p" style="width:auto" onclick="showHome()">⬅ Back to Game</button>
-        <div class="admin-box">
-            <label>1. Lists & Bulk Words</label>
-            <div style="display:flex; gap:8px; margin-bottom:10px;">
-                <input type="text" id="newCatName" placeholder="Create List Name...">
-                <button class="btn btn-p" style="width:100px; margin:0;" onclick="addCategory()">Add List</button>
-                <select id="adminYearSelect" onchange="renderAdminWords()"></select>
-                <button class="btn btn-del" style="margin:0;" onclick="deleteCategory()">Delete List</button>
-            </div>
-            <textarea id="bulkWordsArea" placeholder="Paste words separated by commas..." style="min-height:60px;"></textarea>
-            <button class="btn btn-m" style="width:auto; padding:0 20px; margin-top:5px;" onclick="addBulkWords()">+ Bulk Add Words</button>
-        </div>
-        <div class="admin-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <label style="margin:0">2. Spreadsheet Editor</label>
-                <div style="display:flex; gap:5px;">
-                    <button class="btn btn-m" style="width:auto; font-size:0.75rem;" onclick="saveAllChanges()">💾 Save Changes</button>
-                    <button class="btn btn-del" style="background:#b91c1c; color:white;" onclick="deleteSelected()">🗑️ Delete Checked</button>
-                </div>
-            </div>
-            <div class="scroll"><table><thead><tr><th style="width:35px"><input type="checkbox" onclick="toggleAll(this)"></th><th>Fields</th></tr></thead><tbody id="adminWordList"></tbody></table></div>
-        </div>
-        <div class="admin-box">
-            <label>3. History & Mistakes</label>
-            <div class="scroll" style="max-height:150px;"><table id="histTable"><thead><tr><th>Date</th><th>Name</th><th>Score</th><th>Mistakes</th></tr></thead><tbody id="historyList"></tbody></table></div>
-        </div>
-        <div class="admin-box">
-           <label>4. Backup & Restore</label>
-           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-               <button class="btn btn-m" onclick="exportData()">💾 Export</button>
-               <button class="btn btn-p" onclick="document.getElementById('importInput').click()">📂 Import</button>
-           </div>
-           <input type="file" id="importInput" style="display:none" onchange="importData(event)">
-        </div>
-    </div>
+    <!-- --- Home, Game, Result, Admin screens same as before --- -->
+    <!-- You can paste your existing HTML screens here (unchanged) -->
 </div>
 
 <script>
@@ -148,10 +61,10 @@
         document.getElementById('adminYearSelect').innerHTML = html;
     }
 
-    // ------------------- LOAD JSON -------------------
+    // ------------------- LOAD JSON FROM GITHUB -------------------
     function loadJSONData() {
         if (!Object.keys(db).length) {
-            fetch('data/words.json')
+            fetch('https://sri2317.github.io/Vocabulary4sanvi/data/words.json')
                 .then(res => {
                     if (!res.ok) throw new Error("HTTP error " + res.status);
                     return res.json();
@@ -173,180 +86,9 @@
 
     loadJSONData();
 
-    // ------------------- AUTO-MASK -------------------
-    function generateAutoMask(word) {
-        if (word.length <= 2) return "_ ".repeat(word.length);
-        return word.split('').map((char, index) => (index % 2 === 0 ? char : "_")).join(" ");
-    }
-
-    // ------------------- SCREENS -------------------
-    function showAdmin() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('admin-screen').classList.add('active'); renderAdminWords(); renderHistory(); }
-    function showHome() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('home-screen').classList.add('active'); }
-    function backToHome() { clearInterval(timerInterval); window.speechSynthesis.cancel(); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('home-screen').classList.add('active'); }
-
-    // ------------------- GAME LOGIC -------------------
-    let currentItem, sessionQueue, score, sessionMode, timerInterval, timeLeft, totalTime, currentSessionList, examResults = [];
-
-    function startSession(mode) {
-        currentSessionList = document.getElementById('yearSelect').value;
-        let pool = [];
-        if(currentSessionList === "ALL") { Object.values(db).forEach(list => pool = pool.concat(list)); } 
-        else { pool = [...(db[currentSessionList] || [])]; }
-        if(!pool.length) return alert("List is empty!");
-        
-        sessionMode = mode; score = 0; examResults = [];
-        sessionQueue = pool.sort(() => Math.random() - 0.5);
-        document.getElementById('home-screen').classList.remove('active');
-        document.getElementById('game-screen').classList.add('active');
-        
-        document.getElementById('exam-controls').style.display = mode === 'exam' ? 'grid' : 'none';
-        document.getElementById('quiz-controls').style.display = mode === 'exam' ? 'none' : 'flex';
-
-        totalTime = parseInt(document.getElementById('timeLimitSelect').value);
-        timeLeft = totalTime;
-        document.getElementById('progCont').style.display = 'block';
-        updateTimerDisplay(); nextWord();
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) endSession(); }, 1000);
-    }
-
-    function nextWord() {
-        if(!sessionQueue.length) return endSession();
-        currentItem = sessionQueue.pop();
-        window.speechSynthesis.cancel(); 
-
-        if(sessionMode === 'practice') {
-            document.getElementById('wordDisplay').textContent = currentItem.word;
-            document.getElementById('sentenceDisplay').textContent = currentItem.sentence || "Type the word shown.";
-            speakWord(); 
-        } else {
-            document.getElementById('wordDisplay').textContent = currentItem.mask || generateAutoMask(currentItem.word);
-            let displaySentence = currentItem.sentence || "Spell the word";
-            document.getElementById('sentenceDisplay').textContent = displaySentence.replace(new RegExp(currentItem.word, 'gi'), '____');
-        }
-        document.getElementById('gameInput').value = ""; document.getElementById('gameInput').focus();
-    }
-
-    function processExamNext(isSkip) {
-        const val = document.getElementById('gameInput').value.toLowerCase().trim();
-        const isCorrect = !isSkip && (val === currentItem.word.toLowerCase());
-        if(isCorrect) score += 10;
-        examResults.push({ word: currentItem.word, typed: isSkip ? "Skipped" : (val || "None"), correct: isCorrect });
-        nextWord();
-    }
-
-    document.getElementById('gameInput').addEventListener('input', function() {
-        if(sessionMode === 'exam') return;
-        if(this.value.toLowerCase().trim() === currentItem.word.toLowerCase()) {
-            score += 10;
-            const anim = document.getElementById('correctAnim');
-            anim.style.opacity = '1';
-            anim.style.animation = 'popUp 0.6s ease-out forwards';
-            setTimeout(() => { anim.style.opacity = '0'; anim.style.animation = 'none'; nextWord(); }, 400);
-        }
-    });
-
-    function endSession() {
-        clearInterval(timerInterval); confetti({ particleCount: 150 });
-        document.getElementById('game-screen').classList.remove('active');
-        document.getElementById('result-screen').classList.add('active');
-        document.getElementById('resultScore').textContent = score;
-        let mistakes = [];
-        if(sessionMode === 'exam' || sessionMode === 'quiz') {
-            document.getElementById('examSummary').style.display = 'block';
-            document.getElementById('examSummary').innerHTML = examResults.map(r => {
-                if(!r.correct) mistakes.push(r.word);
-                return `<span style="color:${r.correct?'green':'red'}">${r.correct?'✅':'❌'} ${r.word}</span>`;
-            }).join(' | ');
-        }
-        history.push({ name: document.getElementById('studentName').value || "Guest", score, list: currentSessionList, mistakes: mistakes.join(', '), date: new Date().toLocaleDateString() });
-        saveData();
-    }
-
-    function speakWord() { 
-        let utter = new SpeechSynthesisUtterance();
-        utter.text = currentItem.word;
-        if (currentItem.sentence) utter.text += ". " + currentItem.sentence;
-        window.speechSynthesis.speak(utter); 
-    }
-    
-    function showHint() { alert(`The word is: ${currentItem.word.toUpperCase()}`); }
-    function updateTimerDisplay() { 
-        const mins = Math.floor(timeLeft / 60), secs = timeLeft % 60; 
-        document.getElementById('timerText').textContent = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`; 
-        document.getElementById('progBar').style.width = ((timeLeft / totalTime) * 100) + "%"; 
-    }
-
-    // ------------------- ADMIN -------------------
-    function renderAdminWords() {
-        const cat = document.getElementById('adminYearSelect').value;
-        const list = db[cat] || [];
-        document.getElementById('adminWordList').innerHTML = list.map((item, i) => `
-            <tr class="bulk-row">
-                <td><input type="checkbox" class="word-chk" data-idx="${i}"></td>
-                <td>
-                    <input type="text" class="edit-w" value="${item.word}" placeholder="Word">
-                    <input type="text" class="edit-s" value="${item.sentence || ''}" placeholder="Sentence">
-                    <input type="text" class="edit-m" value="${item.mask || ''}" placeholder="Mask">
-                </td>
-            </tr>`).join('');
-    }
-
-    function addBulkWords() {
-        const cat = document.getElementById('adminYearSelect').value;
-        const text = document.getElementById('bulkWordsArea').value;
-        const existingWords = (db[cat] || []).map(w => w.word.toLowerCase());
-        text.split(/[,\s\n]+/).filter(w => w.length > 0).forEach(w => {
-            const clean = w.toLowerCase().trim();
-            if (!existingWords.includes(clean)) db[cat].push({ word: clean, sentence: "", mask: "" });
-        });
-        document.getElementById('bulkWordsArea').value = ""; saveData(); renderAdminWords();
-    }
-
-    function saveAllChanges() {
-        const cat = document.getElementById('adminYearSelect').value;
-        db[cat] = Array.from(document.querySelectorAll('.bulk-row')).map(row => ({
-            word: row.querySelector('.edit-w').value.toLowerCase().trim(),
-            sentence: row.querySelector('.edit-s').value.trim(),
-            mask: row.querySelector('.edit-m').value.trim()
-        })).filter(x => x.word);
-        saveData(); alert("Changes Saved!");
-    }
-
-    function deleteSelected() {
-        const cat = document.getElementById('adminYearSelect').value;
-        const checks = Array.from(document.querySelectorAll('.word-chk:checked')).map(c => parseInt(c.dataset.idx)).sort((a,b)=>b-a);
-        checks.forEach(i => db[cat].splice(i, 1)); saveData(); renderAdminWords();
-    }
-
-    function renderHistory() {
-        document.getElementById('historyList').innerHTML = history.slice().reverse().map(h => `<tr><td><small>${h.date}</small></td><td>${h.name}</td><td>${h.score}</td><td><small>${h.mistakes || 'None'}</small></td></tr>`).join('');
-    }
-
-    function addCategory() { const v = document.getElementById('newCatName').value.trim(); if(v) { db[v] = db[v] || []; document.getElementById('newCatName').value=""; saveData(); } }
-    function deleteCategory() { const c = document.getElementById('adminYearSelect').value; if(confirm(`Delete ${c}?`)) { delete db[c]; saveData(); } }
-    function exportData() { const b = new Blob([JSON.stringify({db, history})], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'rainbow_backup.json'; a.click(); }
-    
-    function importData(e) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const data = JSON.parse(ev.target.result);
-            const incomingDb = data.db || data;
-            Object.keys(incomingDb).forEach(cat => {
-                if (!db[cat]) db[cat] = incomingDb[cat];
-                else {
-                    const existingWords = db[cat].map(w => w.word.toLowerCase());
-                    incomingDb[cat].forEach(newWordObj => {
-                        if (!existingWords.includes(newWordObj.word.toLowerCase())) db[cat].push(newWordObj);
-                    });
-                }
-            });
-            saveData(); alert("Data Merged!"); renderAdminWords();
-        };
-        reader.readAsText(e.target.files[0]);
-    }
-
-    function toggleAll(src) { document.querySelectorAll('.word-chk').forEach(cb => cb.checked = src.checked); }
+    // ------------------- REST OF YOUR SCRIPT -------------------
+    // Copy all the game logic, admin, practice, quiz, exam functions here
+    // You can keep everything from your previous HTML <script> unchanged
 </script>
 </body>
 </html>
