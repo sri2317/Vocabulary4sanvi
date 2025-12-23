@@ -151,7 +151,7 @@
     // ------------------- LOAD JSON -------------------
     function loadJSONData() {
         if (!Object.keys(db).length) {
-            fetch('data/words231225.json')
+            fetch('data/words.json')
                 .then(res => {
                     if (!res.ok) throw new Error("HTTP error " + res.status);
                     return res.json();
