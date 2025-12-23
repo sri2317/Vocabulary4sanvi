@@ -34,44 +34,13 @@
     </style>
 </head>
 <body>
-
-<div id="correctAnim" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:3rem; pointer-events:none; opacity:0; z-index:1000; font-weight:800; color:#059669; text-shadow:2px 2px white;">✅ AMAZING!</div>
-
-<div class="card">
-    <!-- --- Home, Game, Result, Admin screens same as before --- -->
-    <!-- You can paste your existing HTML screens here (unchanged) -->
-</div>
+<h1 style="text-align:center;margin-top:40px;">
+🌈 Rainbow Spelling Pro is Loading…
+</h1>
 
 <script>
-/* ---------- APP STARTUP ---------- */
-
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("App booting...");
-
-    // If JSON loader exists, use it
-    if (typeof loadJSONData === "function") {
-        loadJSONData();
-    } else {
-        // Fallback: just use localStorage data
-        updateDropdowns();
-    }
-});
-
-/* ---------- SAFETY GUARDS ---------- */
-
-function updateDropdowns() {
-    const yearSel = document.getElementById('yearSelect');
-    const adminSel = document.getElementById('adminYearSelect');
-    if (!yearSel || !adminSel) return;
-
-    const cats = Object.keys(db || {});
-    yearSel.innerHTML =
-        `<option value="ALL">🌍 All Words</option>` +
-        cats.map(c => `<option value="${c}">${c}</option>`).join('');
-    adminSel.innerHTML =
-        cats.map(c => `<option value="${c}">${c}</option>`).join('');
-}
+console.log("SCRIPT RUNNING");
 </script>
-
 </body>
+
 </html>
