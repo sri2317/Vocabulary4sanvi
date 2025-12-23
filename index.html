@@ -43,52 +43,35 @@
 </div>
 
 <script>
-    // ------------------- STORAGE -------------------
-    const STORAGE_KEY = 'rainbow_spelling_core'; 
-    let history = JSON.parse(localStorage.getItem('rainbow_history_core')) || [];
-    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+/* ---------- APP STARTUP ---------- */
 
-    function saveData() { 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); 
-        localStorage.setItem('rainbow_history_core', JSON.stringify(history)); 
-        updateDropdowns(); 
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("App booting...");
+
+    // If JSON loader exists, use it
+    if (typeof loadJSONData === "function") {
+        loadJSONData();
+    } else {
+        // Fallback: just use localStorage data
+        updateDropdowns();
     }
+});
 
-    function updateDropdowns() {
-        const cats = Object.keys(db);
-        const html = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-        document.getElementById('yearSelect').innerHTML = `<option value="ALL">🌍 All Words</option>` + html;
-        document.getElementById('adminYearSelect').innerHTML = html;
-    }
+/* ---------- SAFETY GUARDS ---------- */
 
-    // ------------------- LOAD JSON FROM GITHUB -------------------
-    function loadJSONData() {
-        if (!Object.keys(db).length) {
-            fetch('https://sri2317.github.io/Vocabulary4sanvi/data/words.json')
-                .then(res => {
-                    if (!res.ok) throw new Error("HTTP error " + res.status);
-                    return res.json();
-                })
-                .then(jsonData => {
-                    Object.keys(jsonData).forEach(cat => db[cat] = jsonData[cat]);
-                    saveData();
-                    console.log("Loaded words.json from repo:", db);
-                })
-                .catch(err => {
-                    console.error("Failed to load words.json:", err);
-                    db = { "Reception": [] };
-                    saveData();
-                });
-        } else {
-            updateDropdowns();
-        }
-    }
+function updateDropdowns() {
+    const yearSel = document.getElementById('yearSelect');
+    const adminSel = document.getElementById('adminYearSelect');
+    if (!yearSel || !adminSel) return;
 
-    loadJSONData();
-
-    // ------------------- REST OF YOUR SCRIPT -------------------
-    // Copy all the game logic, admin, practice, quiz, exam functions here
-    // You can keep everything from your previous HTML <script> unchanged
+    const cats = Object.keys(db || {});
+    yearSel.innerHTML =
+        `<option value="ALL">🌍 All Words</option>` +
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    adminSel.innerHTML =
+        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+}
 </script>
+
 </body>
 </html>
