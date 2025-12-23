@@ -130,9 +130,10 @@
 </div>
 
 <script>
+    // ------------------- STORAGE -------------------
     const STORAGE_KEY = 'rainbow_spelling_core'; 
-    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { "Reception": [] };
     let history = JSON.parse(localStorage.getItem('rainbow_history_core')) || [];
+    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
     function saveData() { 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); 
@@ -147,15 +148,43 @@
         document.getElementById('adminYearSelect').innerHTML = html;
     }
 
+    // ------------------- LOAD JSON -------------------
+    function loadJSONData() {
+        if (!Object.keys(db).length) {
+            fetch('data/words.json')
+                .then(res => {
+                    if (!res.ok) throw new Error("HTTP error " + res.status);
+                    return res.json();
+                })
+                .then(jsonData => {
+                    Object.keys(jsonData).forEach(cat => db[cat] = jsonData[cat]);
+                    saveData();
+                    console.log("Loaded words.json from repo:", db);
+                })
+                .catch(err => {
+                    console.error("Failed to load words.json:", err);
+                    db = { "Reception": [] };
+                    saveData();
+                });
+        } else {
+            updateDropdowns();
+        }
+    }
+
+    loadJSONData();
+
+    // ------------------- AUTO-MASK -------------------
     function generateAutoMask(word) {
         if (word.length <= 2) return "_ ".repeat(word.length);
         return word.split('').map((char, index) => (index % 2 === 0 ? char : "_")).join(" ");
     }
 
+    // ------------------- SCREENS -------------------
     function showAdmin() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('admin-screen').classList.add('active'); renderAdminWords(); renderHistory(); }
     function showHome() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('home-screen').classList.add('active'); }
     function backToHome() { clearInterval(timerInterval); window.speechSynthesis.cancel(); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('home-screen').classList.add('active'); }
 
+    // ------------------- GAME LOGIC -------------------
     let currentItem, sessionQueue, score, sessionMode, timerInterval, timeLeft, totalTime, currentSessionList, examResults = [];
 
     function startSession(mode) {
@@ -170,7 +199,6 @@
         document.getElementById('home-screen').classList.remove('active');
         document.getElementById('game-screen').classList.add('active');
         
-        // Show/Hide buttons based on mode
         document.getElementById('exam-controls').style.display = mode === 'exam' ? 'grid' : 'none';
         document.getElementById('quiz-controls').style.display = mode === 'exam' ? 'none' : 'flex';
 
@@ -187,17 +215,14 @@
         currentItem = sessionQueue.pop();
         window.speechSynthesis.cancel(); 
 
-        // Both Quiz and Exam now use the Missing Letter logic (Auto-Mask)
         if(sessionMode === 'practice') {
             document.getElementById('wordDisplay').textContent = currentItem.word;
             document.getElementById('sentenceDisplay').textContent = currentItem.sentence || "Type the word shown.";
             speakWord(); 
         } else {
-            // QUIZ and EXAM: Both show missing letters
             document.getElementById('wordDisplay').textContent = currentItem.mask || generateAutoMask(currentItem.word);
             let displaySentence = currentItem.sentence || "Spell the word";
             document.getElementById('sentenceDisplay').textContent = displaySentence.replace(new RegExp(currentItem.word, 'gi'), '____');
-            // Silent by default. Quiz has the "Hear Word" button visible to use.
         }
         document.getElementById('gameInput').value = ""; document.getElementById('gameInput').focus();
     }
@@ -252,6 +277,7 @@
         document.getElementById('progBar').style.width = ((timeLeft / totalTime) * 100) + "%"; 
     }
 
+    // ------------------- ADMIN -------------------
     function renderAdminWords() {
         const cat = document.getElementById('adminYearSelect').value;
         const list = db[cat] || [];
@@ -319,8 +345,8 @@
         };
         reader.readAsText(e.target.files[0]);
     }
+
     function toggleAll(src) { document.querySelectorAll('.word-chk').forEach(cb => cb.checked = src.checked); }
-    updateDropdowns();
 </script>
 </body>
 </html>
