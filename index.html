@@ -34,13 +34,46 @@
     </style>
 </head>
 <body>
-<h1 style="text-align:center;margin-top:40px;">
-🌈 Rainbow Spelling Pro is Loading…
-</h1>
+
+<div id="app">
+    <h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>
+    <p style="text-align:center">Loading data…</p>
+</div>
 
 <script>
-console.log("SCRIPT RUNNING");
+console.log("SCRIPT STARTED");
+
+/* ---------- GLOBAL STATE ---------- */
+const STORAGE_KEY = 'rainbow_spelling_core';
+let db = {};
+let history = [];
+
+/* ---------- JSON LOADER ---------- */
+async function loadJSONData() {
+    try {
+        const res = await fetch('data/words.json');
+        if (!res.ok) throw new Error('JSON fetch failed');
+        db = await res.json();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        console.log("JSON loaded", db);
+        document.getElementById('app').innerHTML =
+            '<h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>' +
+            '<p style="text-align:center">Data loaded successfully ✅</p>';
+    } catch (e) {
+        console.error(e);
+        document.getElementById('app').innerHTML =
+            '<p style="color:red;text-align:center">Failed to load data</p>';
+    }
+}
+
+/* ---------- STARTUP ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM READY");
+    loadJSONData();
+});
 </script>
+
 </body>
+
 
 </html>
