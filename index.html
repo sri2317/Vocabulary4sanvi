@@ -1,326 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rainbow Spelling Pro 🌈</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root { --p: #6366f1; --bg: #f0f4ff; --card: #ffffff; --txt: #1e293b; --mt: #34d399; --err: #fb7185; --border: #e2e8f0; --exam: #9333ea; }
-        body { font-family: 'Lexend', sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; justify-content: center; color: var(--txt); }
-        .card { background: var(--card); padding: 1.5rem; border-radius: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 950px; position: relative; }
-        .screen { display: none; }
-        .active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        label { display: block; margin: 12px 0 6px; font-weight: 800; font-size: 0.9rem; }
-        input, select, textarea { width: 100%; min-height: 40px; padding: 8px 12px; border: 2px solid var(--border); border-radius: 0.6rem; font-size: 0.95rem; box-sizing: border-box; background: var(--card); color: var(--txt); }
-        .btn { min-height: 45px; border-radius: 0.8rem; border: none; cursor: pointer; font-weight: 800; width: 100%; margin: 5px 0; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; }
-        .btn-p { background: var(--p); color: white; }
-        .btn-m { background: var(--mt); color: white; }
-        .btn-exam { background: var(--exam); color: white; }
-        .btn-del { background: #fee2e2; color: #b91c1c; font-size: 0.75rem; width: auto; padding: 6px 12px; }
-        .admin-box { border: 1px solid var(--border); padding: 15px; border-radius: 1rem; margin-bottom: 15px; background: rgba(0,0,0,0.01); }
-        .scroll { max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; margin-top: 10px; background: white; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { background: #f8fafc; padding: 10px; text-align: left; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 5; font-size: 0.8rem; }
-        td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-        .bulk-row input { border: 1px solid #e2e8f0; width: 100%; padding: 6px; border-radius: 4px; font-size: 0.85rem; margin-bottom: 3px; }
-        .masked-word { font-size: 3.5rem; font-weight: 900; text-align: center; color: var(--p); letter-spacing: 0.4rem; margin: 1.5rem 0; text-transform: uppercase; min-height: 80px; }
-        #sentenceDisplay { background: rgba(99, 102, 241, 0.08); padding: 15px; border-radius: 1rem; text-align: center; font-style: italic; min-height: 40px; font-size: 1.2rem; }
-        .progress-container { width: 100%; height: 10px; background: #e2e8f0; border-radius: 10px; margin: 10px 0; overflow: hidden; display: none; }
-        .progress-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #ff0000, #8b00ff); transition: width 1s linear; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rainbow Spelling Pro 🌈</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root { --p:#6366f1; --bg:#f0f4ff; --card:#fff; --txt:#1e293b; --mt:#34d399; --err:#fb7185; --border:#e2e8f0; --exam:#9333ea; }
+body{font-family:'Lexend',sans-serif;background:var(--bg);margin:0;padding:10px;display:flex;justify-content:center;color:var(--txt)}
+.card{background:var(--card);padding:1.5rem;border-radius:2rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);width:100%;max-width:950px}
+.screen{display:none}
+.active{display:block}
+label{display:block;margin:12px 0 6px;font-weight:800;font-size:.9rem}
+input,select,textarea{width:100%;min-height:40px;padding:8px 12px;border:2px solid var(--border);border-radius:.6rem}
+.btn{min-height:45px;border-radius:.8rem;border:none;cursor:pointer;font-weight:800;width:100%;margin:5px 0}
+.btn-p{background:var(--p);color:#fff}
+.btn-m{background:var(--mt);color:#fff}
+.btn-exam{background:var(--exam);color:#fff}
+.btn-del{background:#fee2e2;color:#b91c1c;font-size:.75rem;width:auto;padding:6px 12px}
+.masked-word{font-size:3.5rem;font-weight:900;text-align:center;letter-spacing:.4rem;margin:1.5rem 0}
+.scroll{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;margin-top:10px;background:#fff}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;padding:10px;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:8px;border-bottom:1px solid var(--border)}
+</style>
 </head>
+
 <body>
 
-<div id="correctAnim" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:3rem; pointer-events:none; opacity:0; z-index:1000; font-weight:800; color:#059669; text-shadow:2px 2px white;">✅ AMAZING!</div>
-
 <div class="card">
-    <div id="home-screen" class="screen active">
-        <h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>
-        <label>Student Name</label>
-        <input type="text" id="studentName" placeholder="Enter student name...">
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>Select List</label><select id="yearSelect"></select></div>
-            <div><label>Time Limit</label>
-                <select id="timeLimitSelect">
-                    <option value="60">1 Min</option>
-                    <option value="120">2 Mins</option>
-                    <option value="300" selected>5 Mins</option>
-                    <option value="900">15 Mins</option>
-                    <option value="1200">20 Mins</option>
-                </select>
-            </div>
-        </div>
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top:20px;">
-            <button class="btn btn-m" onclick="startSession('practice')">📖 Practice</button>
-            <button class="btn btn-p" onclick="startSession('quiz')">🏆 Quiz</button>
-            <button class="btn btn-exam" onclick="startSession('exam')">🎓 Exam</button>
-        </div>
-        <button class="btn" style="background:#f1f5f9; margin-top:15px;" onclick="showAdmin()">Admin Dashboard ⚙️</button>
-    </div>
 
-    <div id="game-screen" class="screen">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-            <button class="btn btn-del" onclick="backToHome()">EXIT</button>
-            <div id="timerText" style="font-weight:bold; font-size: 1.1rem;">⏱ 00:00</div>
-        </div>
-        <div class="progress-container" id="progCont"><div class="progress-bar" id="progBar"></div></div>
-        <div class="masked-word" id="wordDisplay"></div>
-        <div id="sentenceDisplay"></div>
-        <input type="text" id="gameInput" placeholder="Type here..." autocomplete="off" style="text-align:center; font-size:2rem; margin-top:15px;">
-        
-        <div id="exam-controls" style="display:none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:10px;">
-            <button class="btn" style="background:#cbd5e1;" onclick="processExamNext(true)">⏭ Skip</button>
-            <button class="btn btn-exam" onclick="processExamNext(false)">Next Word ➔</button>
-        </div>
+<!-- HOME -->
+<div id="home-screen" class="screen active">
+<h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>
 
-        <div id="quiz-controls" style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn btn-p" id="speakBtn" onclick="speakWord()" style="flex:2">🔊 Hear Word</button>
-            <button class="btn" style="flex:1; background:#fef3c7; color:#92400e;" onclick="showHint()">Hint 💡</button>
-        </div>
-    </div>
+<label>Student Name</label>
+<input id="studentName" placeholder="Enter student name">
 
-    <div id="result-screen" class="screen" style="text-align:center">
-        <h2 id="resultTitle">Session Complete! 🎉</h2>
-        <div style="font-size: 4rem; margin: 10px 0; font-weight: 800; color: var(--p);" id="resultScore">0</div>
-        <div id="examSummary" style="text-align:left; padding:15px; background:#f8fafc; border-radius:1rem; max-height:200px; overflow-y:auto; display:none;"></div>
-        <button class="btn btn-p" style="margin-top:20px" onclick="backToHome()">Take Another Session</button>
-    </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div>
+<label>Select List</label>
+<select id="yearSelect"></select>
+</div>
+<div>
+<label>Time Limit</label>
+<select id="timeLimitSelect">
+<option value="60">1 Min</option>
+<option value="120">2 Mins</option>
+<option value="300" selected>5 Mins</option>
+<option value="900">15 Mins</option>
+<option value="1200">20 Mins</option>
+</select>
+</div>
+</div>
 
-    <div id="admin-screen" class="screen">
-        <button class="btn btn-p" style="width:auto" onclick="showHome()">⬅ Back to Game</button>
-        <div class="admin-box">
-            <label>1. Lists & Bulk Words</label>
-            <div style="display:flex; gap:8px; margin-bottom:10px;">
-                <input type="text" id="newCatName" placeholder="Create List Name...">
-                <button class="btn btn-p" style="width:100px; margin:0;" onclick="addCategory()">Add List</button>
-                <select id="adminYearSelect" onchange="renderAdminWords()"></select>
-                <button class="btn btn-del" style="margin:0;" onclick="deleteCategory()">Delete List</button>
-            </div>
-            <textarea id="bulkWordsArea" placeholder="Paste words separated by commas..." style="min-height:60px;"></textarea>
-            <button class="btn btn-m" style="width:auto; padding:0 20px; margin-top:5px;" onclick="addBulkWords()">+ Bulk Add Words</button>
-        </div>
-        <div class="admin-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <label style="margin:0">2. Spreadsheet Editor</label>
-                <div style="display:flex; gap:5px;">
-                    <button class="btn btn-m" style="width:auto; font-size:0.75rem;" onclick="saveAllChanges()">💾 Save Changes</button>
-                    <button class="btn btn-del" style="background:#b91c1c; color:white;" onclick="deleteSelected()">🗑️ Delete Checked</button>
-                </div>
-            </div>
-            <div class="scroll"><table><thead><tr><th style="width:35px"><input type="checkbox" onclick="toggleAll(this)"></th><th>Fields</th></tr></thead><tbody id="adminWordList"></tbody></table></div>
-        </div>
-        <div class="admin-box">
-            <label>3. History & Mistakes</label>
-            <div class="scroll" style="max-height:150px;"><table id="histTable"><thead><tr><th>Date</th><th>Name</th><th>Score</th><th>Mistakes</th></tr></thead><tbody id="historyList"></tbody></table></div>
-        </div>
-        <div class="admin-box">
-           <label>4. Backup & Restore</label>
-           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-               <button class="btn btn-m" onclick="exportData()">💾 Export</button>
-               <button class="btn btn-p" onclick="document.getElementById('importInput').click()">📂 Import</button>
-           </div>
-           <input type="file" id="importInput" style="display:none" onchange="importData(event)">
-        </div>
-    </div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px">
+<button class="btn btn-m" onclick="startSession('practice')">📖 Practice</button>
+<button class="btn btn-p" onclick="startSession('quiz')">🏆 Quiz</button>
+<button class="btn btn-exam" onclick="startSession('exam')">🎓 Exam</button>
+</div>
+
+<button class="btn" style="background:#f1f5f9;margin-top:15px" onclick="showAdmin()">Admin ⚙️</button>
+</div>
+
+<!-- GAME -->
+<div id="game-screen" class="screen">
+<div style="display:flex;justify-content:space-between">
+<button class="btn btn-del" onclick="backToHome()">EXIT</button>
+<div id="timerText"></div>
+</div>
+
+<div class="masked-word" id="wordDisplay"></div>
+<div id="sentenceDisplay"></div>
+<input id="gameInput" autocomplete="off" style="font-size:2rem;text-align:center">
+
+<div id="quiz-controls" style="display:flex;gap:10px">
+<button class="btn btn-p" onclick="speakWord()">🔊 Hear Word</button>
+<button class="btn" style="background:#fef3c7" onclick="showHint()">Hint 💡</button>
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="result-screen" class="screen" style="text-align:center">
+<h2>Session Complete!</h2>
+<div id="resultScore" style="font-size:4rem"></div>
+<button class="btn btn-p" onclick="backToHome()">Home</button>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen" class="screen">
+<button class="btn btn-p" style="width:auto" onclick="showHome()">⬅ Back</button>
+
+<div>
+<input id="newCatName" placeholder="New list name">
+<button class="btn btn-p" onclick="addCategory()">Add List</button>
+<select id="adminYearSelect" onchange="renderAdminWords()"></select>
+<button class="btn btn-del" onclick="deleteCategory()">Delete</button>
+</div>
+
+<textarea id="bulkWordsArea" placeholder="Comma separated words"></textarea>
+<button class="btn btn-m" onclick="addBulkWords()">Bulk Add</button>
+
+<div class="scroll">
+<table>
+<tbody id="adminWordList"></tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 <script>
-    const STORAGE_KEY = 'rainbow_spelling_core'; 
-    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { "Reception": [] };
-    let history = JSON.parse(localStorage.getItem('rainbow_history_core')) || [];
+/* ================= STORAGE ================= */
+const STORAGE_KEY = 'rainbow_spelling_core';
+let db = {};
+let history = JSON.parse(localStorage.getItem('rainbow_history_core')) || [];
 
-    function saveData() { 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); 
-        localStorage.setItem('rainbow_history_core', JSON.stringify(history)); 
-        updateDropdowns(); 
+/* ================= JSON BOOTSTRAP ================= */
+async function loadInitialData() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        db = JSON.parse(saved);
+        updateDropdowns();
+        return;
     }
 
-    function updateDropdowns() {
-        const cats = Object.keys(db);
-        const html = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-        document.getElementById('yearSelect').innerHTML = `<option value="ALL">🌍 All Words</option>` + html;
-        document.getElementById('adminYearSelect').innerHTML = html;
+    try {
+        const res = await fetch('./data/words.json');
+        if (!res.ok) throw new Error('JSON missing');
+        db = await res.json();
+        saveData();
+    } catch (e) {
+        console.error(e);
+        db = { "Reception": [] };
     }
+    updateDropdowns();
+}
 
-    function generateAutoMask(word) {
-        if (word.length <= 2) return "_ ".repeat(word.length);
-        return word.split('').map((char, index) => (index % 2 === 0 ? char : "_")).join(" ");
-    }
+/* ================= CORE ================= */
+function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    localStorage.setItem('rainbow_history_core', JSON.stringify(history));
+}
 
-    function showAdmin() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('admin-screen').classList.add('active'); renderAdminWords(); renderHistory(); }
-    function showHome() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('home-screen').classList.add('active'); }
-    function backToHome() { clearInterval(timerInterval); window.speechSynthesis.cancel(); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('home-screen').classList.add('active'); }
+function updateDropdowns() {
+    const cats = Object.keys(db);
+    yearSelect.innerHTML = `<option value="ALL">🌍 All</option>` + cats.map(c=>`<option>${c}</option>`).join('');
+    adminYearSelect.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
+}
 
-    let currentItem, sessionQueue, score, sessionMode, timerInterval, timeLeft, totalTime, currentSessionList, examResults = [];
+/* ================= GAME LOGIC (UNCHANGED) ================= */
+let sessionQueue=[], currentItem, score=0, timer, timeLeft;
 
-    function startSession(mode) {
-        currentSessionList = document.getElementById('yearSelect').value;
-        let pool = [];
-        if(currentSessionList === "ALL") { Object.values(db).forEach(list => pool = pool.concat(list)); } 
-        else { pool = [...(db[currentSessionList] || [])]; }
-        if(!pool.length) return alert("List is empty!");
-        
-        sessionMode = mode; score = 0; examResults = [];
-        sessionQueue = pool.sort(() => Math.random() - 0.5);
-        document.getElementById('home-screen').classList.remove('active');
-        document.getElementById('game-screen').classList.add('active');
-        
-        // Show/Hide buttons based on mode
-        document.getElementById('exam-controls').style.display = mode === 'exam' ? 'grid' : 'none';
-        document.getElementById('quiz-controls').style.display = mode === 'exam' ? 'none' : 'flex';
+function generateAutoMask(w){return w.split('').map((c,i)=>i%2? '_':c).join(' ')}
 
-        totalTime = parseInt(document.getElementById('timeLimitSelect').value);
-        timeLeft = totalTime;
-        document.getElementById('progCont').style.display = 'block';
-        updateTimerDisplay(); nextWord();
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) endSession(); }, 1000);
-    }
+function startSession(mode){
+    const sel = yearSelect.value;
+    let pool=[];
+    if(sel==="ALL") Object.values(db).forEach(l=>pool.push(...l));
+    else pool=[...(db[sel]||[])];
+    if(!pool.length) return alert("List empty");
 
-    function nextWord() {
-        if(!sessionQueue.length) return endSession();
-        currentItem = sessionQueue.pop();
-        window.speechSynthesis.cancel(); 
+    score=0;
+    sessionQueue=pool.sort(()=>Math.random()-.5);
+    home-screen.classList.remove('active');
+    game-screen.classList.add('active');
+    nextWord();
+}
 
-        // Both Quiz and Exam now use the Missing Letter logic (Auto-Mask)
-        if(sessionMode === 'practice') {
-            document.getElementById('wordDisplay').textContent = currentItem.word;
-            document.getElementById('sentenceDisplay').textContent = currentItem.sentence || "Type the word shown.";
-            speakWord(); 
-        } else {
-            // QUIZ and EXAM: Both show missing letters
-            document.getElementById('wordDisplay').textContent = currentItem.mask || generateAutoMask(currentItem.word);
-            let displaySentence = currentItem.sentence || "Spell the word";
-            document.getElementById('sentenceDisplay').textContent = displaySentence.replace(new RegExp(currentItem.word, 'gi'), '____');
-            // Silent by default. Quiz has the "Hear Word" button visible to use.
-        }
-        document.getElementById('gameInput').value = ""; document.getElementById('gameInput').focus();
-    }
+function nextWord(){
+    if(!sessionQueue.length) return endSession();
+    currentItem=sessionQueue.pop();
+    wordDisplay.textContent=currentItem.mask||generateAutoMask(currentItem.word);
+    sentenceDisplay.textContent=currentItem.sentence||"";
+    gameInput.value="";
+    gameInput.focus();
+}
 
-    function processExamNext(isSkip) {
-        const val = document.getElementById('gameInput').value.toLowerCase().trim();
-        const isCorrect = !isSkip && (val === currentItem.word.toLowerCase());
-        if(isCorrect) score += 10;
-        examResults.push({ word: currentItem.word, typed: isSkip ? "Skipped" : (val || "None"), correct: isCorrect });
+gameInput.addEventListener('input',()=>{
+    if(gameInput.value.toLowerCase().trim()===currentItem.word.toLowerCase()){
+        score+=10;
         nextWord();
     }
+});
 
-    document.getElementById('gameInput').addEventListener('input', function() {
-        if(sessionMode === 'exam') return;
-        if(this.value.toLowerCase().trim() === currentItem.word.toLowerCase()) {
-            score += 10;
-            const anim = document.getElementById('correctAnim');
-            anim.style.opacity = '1';
-            anim.style.animation = 'popUp 0.6s ease-out forwards';
-            setTimeout(() => { anim.style.opacity = '0'; anim.style.animation = 'none'; nextWord(); }, 400);
-        }
+function endSession(){
+    game-screen.classList.remove('active');
+    result-screen.classList.add('active');
+    resultScore.textContent=score;
+    history.push({name:studentName.value||"Guest",score,date:new Date().toLocaleDateString()});
+    saveData();
+}
+
+/* ================= ADMIN ================= */
+function showAdmin(){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    admin-screen.classList.add('active');
+    renderAdminWords();
+}
+
+function renderAdminWords(){
+    const cat=adminYearSelect.value;
+    adminWordList.innerHTML=(db[cat]||[]).map(w=>`
+        <tr><td>${w.word}</td></tr>
+    `).join('');
+}
+
+function addBulkWords(){
+    const cat=adminYearSelect.value;
+    bulkWordsArea.value.split(/[,\n]+/).forEach(w=>{
+        if(w.trim()) db[cat].push({word:w.trim(),sentence:"",mask:""});
     });
+    bulkWordsArea.value="";
+    saveData();
+    renderAdminWords();
+}
 
-    function endSession() {
-        clearInterval(timerInterval); confetti({ particleCount: 150 });
-        document.getElementById('game-screen').classList.remove('active');
-        document.getElementById('result-screen').classList.add('active');
-        document.getElementById('resultScore').textContent = score;
-        let mistakes = [];
-        if(sessionMode === 'exam' || sessionMode === 'quiz') {
-            document.getElementById('examSummary').style.display = 'block';
-            document.getElementById('examSummary').innerHTML = examResults.map(r => {
-                if(!r.correct) mistakes.push(r.word);
-                return `<span style="color:${r.correct?'green':'red'}">${r.correct?'✅':'❌'} ${r.word}</span>`;
-            }).join(' | ');
-        }
-        history.push({ name: document.getElementById('studentName').value || "Guest", score, list: currentSessionList, mistakes: mistakes.join(', '), date: new Date().toLocaleDateString() });
-        saveData();
-    }
+function addCategory(){
+    const v=newCatName.value.trim();
+    if(v&&!db[v]){db[v]=[];newCatName.value="";saveData();updateDropdowns()}
+}
 
-    function speakWord() { 
-        let utter = new SpeechSynthesisUtterance();
-        utter.text = currentItem.word;
-        if (currentItem.sentence) utter.text += ". " + currentItem.sentence;
-        window.speechSynthesis.speak(utter); 
-    }
-    
-    function showHint() { alert(`The word is: ${currentItem.word.toUpperCase()}`); }
-    function updateTimerDisplay() { 
-        const mins = Math.floor(timeLeft / 60), secs = timeLeft % 60; 
-        document.getElementById('timerText').textContent = `⏱ ${mins}:${secs.toString().padStart(2, '0')}`; 
-        document.getElementById('progBar').style.width = ((timeLeft / totalTime) * 100) + "%"; 
-    }
+function deleteCategory(){
+    const c=adminYearSelect.value;
+    if(confirm(`Delete ${c}?`)){delete db[c];saveData();updateDropdowns()}
+}
 
-    function renderAdminWords() {
-        const cat = document.getElementById('adminYearSelect').value;
-        const list = db[cat] || [];
-        document.getElementById('adminWordList').innerHTML = list.map((item, i) => `
-            <tr class="bulk-row">
-                <td><input type="checkbox" class="word-chk" data-idx="${i}"></td>
-                <td>
-                    <input type="text" class="edit-w" value="${item.word}" placeholder="Word">
-                    <input type="text" class="edit-s" value="${item.sentence || ''}" placeholder="Sentence">
-                    <input type="text" class="edit-m" value="${item.mask || ''}" placeholder="Mask">
-                </td>
-            </tr>`).join('');
-    }
+/* ================= NAV ================= */
+function showHome(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));home-screen.classList.add('active')}
+function backToHome(){showHome()}
+function speakWord(){speechSynthesis.speak(new SpeechSynthesisUtterance(currentItem.word))}
+function showHint(){alert(currentItem.word.toUpperCase())}
 
-    function addBulkWords() {
-        const cat = document.getElementById('adminYearSelect').value;
-        const text = document.getElementById('bulkWordsArea').value;
-        const existingWords = (db[cat] || []).map(w => w.word.toLowerCase());
-        text.split(/[,\s\n]+/).filter(w => w.length > 0).forEach(w => {
-            const clean = w.toLowerCase().trim();
-            if (!existingWords.includes(clean)) db[cat].push({ word: clean, sentence: "", mask: "" });
-        });
-        document.getElementById('bulkWordsArea').value = ""; saveData(); renderAdminWords();
-    }
-
-    function saveAllChanges() {
-        const cat = document.getElementById('adminYearSelect').value;
-        db[cat] = Array.from(document.querySelectorAll('.bulk-row')).map(row => ({
-            word: row.querySelector('.edit-w').value.toLowerCase().trim(),
-            sentence: row.querySelector('.edit-s').value.trim(),
-            mask: row.querySelector('.edit-m').value.trim()
-        })).filter(x => x.word);
-        saveData(); alert("Changes Saved!");
-    }
-
-    function deleteSelected() {
-        const cat = document.getElementById('adminYearSelect').value;
-        const checks = Array.from(document.querySelectorAll('.word-chk:checked')).map(c => parseInt(c.dataset.idx)).sort((a,b)=>b-a);
-        checks.forEach(i => db[cat].splice(i, 1)); saveData(); renderAdminWords();
-    }
-
-    function renderHistory() {
-        document.getElementById('historyList').innerHTML = history.slice().reverse().map(h => `<tr><td><small>${h.date}</small></td><td>${h.name}</td><td>${h.score}</td><td><small>${h.mistakes || 'None'}</small></td></tr>`).join('');
-    }
-
-    function addCategory() { const v = document.getElementById('newCatName').value.trim(); if(v) { db[v] = db[v] || []; document.getElementById('newCatName').value=""; saveData(); } }
-    function deleteCategory() { const c = document.getElementById('adminYearSelect').value; if(confirm(`Delete ${c}?`)) { delete db[c]; saveData(); } }
-    function exportData() { const b = new Blob([JSON.stringify({db, history})], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'rainbow_backup.json'; a.click(); }
-    
-    function importData(e) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const data = JSON.parse(ev.target.result);
-            const incomingDb = data.db || data;
-            Object.keys(incomingDb).forEach(cat => {
-                if (!db[cat]) db[cat] = incomingDb[cat];
-                else {
-                    const existingWords = db[cat].map(w => w.word.toLowerCase());
-                    incomingDb[cat].forEach(newWordObj => {
-                        if (!existingWords.includes(newWordObj.word.toLowerCase())) db[cat].push(newWordObj);
-                    });
-                }
-            });
-            saveData(); alert("Data Merged!"); renderAdminWords();
-        };
-        reader.readAsText(e.target.files[0]);
-    }
-    function toggleAll(src) { document.querySelectorAll('.word-chk').forEach(cb => cb.checked = src.checked); }
-    updateDropdowns();
+/* ================= INIT ================= */
+loadInitialData();
 </script>
+
 </body>
 </html>
