@@ -1,31 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rainbow Spelling Pro 🌈</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-:root { --p:#6366f1; --bg:#f0f4ff; --card:#fff; --txt:#1e293b; --mt:#34d399; --err:#fb7185; --border:#e2e8f0; --exam:#9333ea; }
-body{font-family:'Lexend',sans-serif;background:var(--bg);margin:0;padding:10px;display:flex;justify-content:center;color:var(--txt)}
+:root{--p:#6366f1;--bg:#f0f4ff;--card:#fff;--txt:#1e293b;--mt:#34d399;--border:#e2e8f0;--exam:#9333ea}
+body{font-family:Lexend,sans-serif;background:var(--bg);margin:0;padding:10px;display:flex;justify-content:center}
 .card{background:var(--card);padding:1.5rem;border-radius:2rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);width:100%;max-width:950px}
 .screen{display:none}
 .active{display:block}
-label{display:block;margin:12px 0 6px;font-weight:800;font-size:.9rem}
-input,select,textarea{width:100%;min-height:40px;padding:8px 12px;border:2px solid var(--border);border-radius:.6rem}
-.btn{min-height:45px;border-radius:.8rem;border:none;cursor:pointer;font-weight:800;width:100%;margin:5px 0}
+label{font-weight:800;font-size:.9rem;margin-top:10px}
+input,select,textarea{width:100%;padding:8px;border:2px solid var(--border);border-radius:.6rem}
+.btn{min-height:45px;border:none;border-radius:.8rem;font-weight:800;cursor:pointer;margin-top:8px}
 .btn-p{background:var(--p);color:#fff}
 .btn-m{background:var(--mt);color:#fff}
 .btn-exam{background:var(--exam);color:#fff}
-.btn-del{background:#fee2e2;color:#b91c1c;font-size:.75rem;width:auto;padding:6px 12px}
+.btn-del{background:#fee2e2;color:#b91c1c}
 .masked-word{font-size:3.5rem;font-weight:900;text-align:center;letter-spacing:.4rem;margin:1.5rem 0}
-.scroll{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;margin-top:10px;background:#fff}
-table{width:100%;border-collapse:collapse}
-th{background:#f8fafc;padding:10px;text-align:left;border-bottom:2px solid var(--border)}
-td{padding:8px;border-bottom:1px solid var(--border)}
+.scroll{max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:10px}
 </style>
 </head>
 
@@ -38,68 +35,52 @@ td{padding:8px;border-bottom:1px solid var(--border)}
 <h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>
 
 <label>Student Name</label>
-<input id="studentName" placeholder="Enter student name">
+<input id="studentName">
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-<div>
 <label>Select List</label>
 <select id="yearSelect"></select>
-</div>
-<div>
+
 <label>Time Limit</label>
 <select id="timeLimitSelect">
-<option value="60">1 Min</option>
-<option value="120">2 Mins</option>
-<option value="300" selected>5 Mins</option>
-<option value="900">15 Mins</option>
-<option value="1200">20 Mins</option>
+<option value="300">5 Min</option>
+<option value="900">15 Min</option>
+<option value="1200">20 Min</option>
 </select>
-</div>
-</div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px">
 <button class="btn btn-m" onclick="startSession('practice')">📖 Practice</button>
 <button class="btn btn-p" onclick="startSession('quiz')">🏆 Quiz</button>
 <button class="btn btn-exam" onclick="startSession('exam')">🎓 Exam</button>
-</div>
 
-<button class="btn" style="background:#f1f5f9;margin-top:15px" onclick="showAdmin()">Admin ⚙️</button>
+<button class="btn" onclick="showAdmin()">Admin ⚙️</button>
 </div>
 
 <!-- GAME -->
 <div id="game-screen" class="screen">
-<div style="display:flex;justify-content:space-between">
-<button class="btn btn-del" onclick="backToHome()">EXIT</button>
-<div id="timerText"></div>
-</div>
-
+<button class="btn btn-del" onclick="backToHome()">Exit</button>
 <div class="masked-word" id="wordDisplay"></div>
 <div id="sentenceDisplay"></div>
 <input id="gameInput" autocomplete="off" style="font-size:2rem;text-align:center">
-
-<div id="quiz-controls" style="display:flex;gap:10px">
 <button class="btn btn-p" onclick="speakWord()">🔊 Hear Word</button>
-<button class="btn" style="background:#fef3c7" onclick="showHint()">Hint 💡</button>
-</div>
+<button class="btn" onclick="showHint()">Hint 💡</button>
 </div>
 
 <!-- RESULT -->
 <div id="result-screen" class="screen" style="text-align:center">
-<h2>Session Complete!</h2>
+<h2>Session Complete</h2>
 <div id="resultScore" style="font-size:4rem"></div>
 <button class="btn btn-p" onclick="backToHome()">Home</button>
 </div>
 
 <!-- ADMIN -->
 <div id="admin-screen" class="screen">
-<button class="btn btn-p" style="width:auto" onclick="showHome()">⬅ Back</button>
+<button class="btn btn-p" onclick="showHome()">⬅ Back</button>
 
-<div>
-<input id="newCatName" placeholder="New list name">
-<button class="btn btn-p" onclick="addCategory()">Add List</button>
+<label>New List</label>
+<input id="newCatName">
+<button class="btn btn-m" onclick="addCategory()">Add</button>
+
 <select id="adminYearSelect" onchange="renderAdminWords()"></select>
-<button class="btn btn-del" onclick="deleteCategory()">Delete</button>
-</div>
+<button class="btn btn-del" onclick="deleteCategory()">Delete List</button>
 
 <textarea id="bulkWordsArea" placeholder="Comma separated words"></textarea>
 <button class="btn btn-m" onclick="addBulkWords()">Bulk Add</button>
@@ -119,121 +100,146 @@ const STORAGE_KEY = 'rainbow_spelling_core';
 let db = {};
 let history = JSON.parse(localStorage.getItem('rainbow_history_core')) || [];
 
-/* ================= JSON BOOTSTRAP ================= */
-async function loadInitialData() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-        db = JSON.parse(saved);
-        updateDropdowns();
-        return;
-    }
-
-    try {
-        const res = await fetch('./data/words.json');
-        if (!res.ok) throw new Error('JSON missing');
-        db = await res.json();
-        saveData();
-    } catch (e) {
-        console.error(e);
-        db = { "Reception": [] };
-    }
+/* ================= LOAD JSON IF NEEDED ================= */
+async function loadInitialData(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    db = JSON.parse(saved);
     updateDropdowns();
+    return;
+  }
+
+  try{
+    const res = await fetch('./data/words.json');
+    db = await res.json();
+  }catch(e){
+    console.error('JSON load failed', e);
+    db = { "Reception": [] };
+  }
+
+  // Safety: force arrays
+  Object.keys(db).forEach(k=>{
+    if(!Array.isArray(db[k])) db[k] = [];
+  });
+
+  saveData();
+  updateDropdowns();
 }
 
 /* ================= CORE ================= */
-function saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    localStorage.setItem('rainbow_history_core', JSON.stringify(history));
+function saveData(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  localStorage.setItem('rainbow_history_core', JSON.stringify(history));
 }
 
-function updateDropdowns() {
-    const cats = Object.keys(db);
-    yearSelect.innerHTML = `<option value="ALL">🌍 All</option>` + cats.map(c=>`<option>${c}</option>`).join('');
-    adminYearSelect.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
+function updateDropdowns(){
+  const cats = Object.keys(db);
+  yearSelect.innerHTML = `<option value="ALL">All</option>` + cats.map(c=>`<option>${c}</option>`).join('');
+  adminYearSelect.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
 }
 
-/* ================= GAME LOGIC (UNCHANGED) ================= */
-let sessionQueue=[], currentItem, score=0, timer, timeLeft;
+/* ================= GAME ================= */
+let sessionQueue=[], currentItem, score=0;
 
-function generateAutoMask(w){return w.split('').map((c,i)=>i%2? '_':c).join(' ')}
+function generateAutoMask(w){
+  return w.split('').map((c,i)=>i%2?'_':c).join(' ');
+}
 
-function startSession(mode){
-    const sel = yearSelect.value;
-    let pool=[];
-    if(sel==="ALL") Object.values(db).forEach(l=>pool.push(...l));
-    else pool=[...(db[sel]||[])];
-    if(!pool.length) return alert("List empty");
+function startSession(){
+  const sel = yearSelect.value;
+  let pool=[];
 
-    score=0;
-    sessionQueue=pool.sort(()=>Math.random()-.5);
-    home-screen.classList.remove('active');
-    game-screen.classList.add('active');
-    nextWord();
+  if(sel==="ALL"){
+    Object.values(db).forEach(list=>{
+      if(Array.isArray(list)) pool = pool.concat(list);
+    });
+  }else{
+    pool = Array.isArray(db[sel]) ? [...db[sel]] : [];
+  }
+
+  if(!pool.length) return alert("List empty");
+
+  score=0;
+  sessionQueue = pool.sort(()=>Math.random()-.5);
+
+  showScreen('game-screen');
+  nextWord();
 }
 
 function nextWord(){
-    if(!sessionQueue.length) return endSession();
-    currentItem=sessionQueue.pop();
-    wordDisplay.textContent=currentItem.mask||generateAutoMask(currentItem.word);
-    sentenceDisplay.textContent=currentItem.sentence||"";
-    gameInput.value="";
-    gameInput.focus();
+  if(!sessionQueue.length) return endSession();
+  currentItem = sessionQueue.pop();
+  wordDisplay.textContent = currentItem.mask || generateAutoMask(currentItem.word);
+  sentenceDisplay.textContent = currentItem.sentence || "";
+  gameInput.value="";
+  gameInput.focus();
 }
 
 gameInput.addEventListener('input',()=>{
-    if(gameInput.value.toLowerCase().trim()===currentItem.word.toLowerCase()){
-        score+=10;
-        nextWord();
-    }
+  if(gameInput.value.trim().toLowerCase() === currentItem.word.toLowerCase()){
+    score+=10;
+    nextWord();
+  }
 });
 
 function endSession(){
-    game-screen.classList.remove('active');
-    result-screen.classList.add('active');
-    resultScore.textContent=score;
-    history.push({name:studentName.value||"Guest",score,date:new Date().toLocaleDateString()});
-    saveData();
+  showScreen('result-screen');
+  resultScore.textContent = score;
+  history.push({name:studentName.value||"Guest",score,date:new Date().toLocaleDateString()});
+  saveData();
 }
 
 /* ================= ADMIN ================= */
 function showAdmin(){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    admin-screen.classList.add('active');
-    renderAdminWords();
+  showScreen('admin-screen');
+  renderAdminWords();
 }
 
 function renderAdminWords(){
-    const cat=adminYearSelect.value;
-    adminWordList.innerHTML=(db[cat]||[]).map(w=>`
-        <tr><td>${w.word}</td></tr>
-    `).join('');
+  const cat = adminYearSelect.value;
+  adminWordList.innerHTML = (db[cat]||[]).map(w=>`
+    <tr><td>${w.word}</td></tr>
+  `).join('');
 }
 
 function addBulkWords(){
-    const cat=adminYearSelect.value;
-    bulkWordsArea.value.split(/[,\n]+/).forEach(w=>{
-        if(w.trim()) db[cat].push({word:w.trim(),sentence:"",mask:""});
-    });
-    bulkWordsArea.value="";
-    saveData();
-    renderAdminWords();
+  const cat = adminYearSelect.value;
+  bulkWordsArea.value.split(/[,\n]+/).forEach(w=>{
+    if(w.trim()) db[cat].push({word:w.trim(),sentence:"",mask:""});
+  });
+  bulkWordsArea.value="";
+  saveData();
+  renderAdminWords();
 }
 
 function addCategory(){
-    const v=newCatName.value.trim();
-    if(v&&!db[v]){db[v]=[];newCatName.value="";saveData();updateDropdowns()}
+  const v = newCatName.value.trim();
+  if(v && !db[v]){
+    db[v] = [];
+    newCatName.value="";
+    saveData();
+    updateDropdowns();
+  }
 }
 
 function deleteCategory(){
-    const c=adminYearSelect.value;
-    if(confirm(`Delete ${c}?`)){delete db[c];saveData();updateDropdowns()}
+  const c = adminYearSelect.value;
+  if(confirm(`Delete ${c}?`)){
+    delete db[c];
+    saveData();
+    updateDropdowns();
+  }
 }
 
 /* ================= NAV ================= */
-function showHome(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));home-screen.classList.add('active')}
-function backToHome(){showHome()}
-function speakWord(){speechSynthesis.speak(new SpeechSynthesisUtterance(currentItem.word))}
-function showHint(){alert(currentItem.word.toUpperCase())}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showHome(){ showScreen('home-screen'); }
+function backToHome(){ showHome(); }
+function speakWord(){ speechSynthesis.speak(new SpeechSynthesisUtterance(currentItem.word)); }
+function showHint(){ alert(currentItem.word.toUpperCase()); }
 
 /* ================= INIT ================= */
 loadInitialData();
