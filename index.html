@@ -1,249 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="te">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rainbow Spelling Pro 🌈</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zengita | Sacred Learning & Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;700&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --maroon: #5D0E11; 
+            --gold: #C5A028; 
+            --cream: #FFFBF2; 
+            --text-dark: #2D0506;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        body { 
+            background: #1a1a1a; 
+            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            font-family: 'Noto Sans Telugu', sans-serif;
+        }
 
-<style>
-:root{--p:#6366f1;--bg:#f0f4ff;--card:#fff;--txt:#1e293b;--mt:#34d399;--border:#e2e8f0;--exam:#9333ea}
-body{font-family:Lexend,sans-serif;background:var(--bg);margin:0;padding:10px;display:flex;justify-content:center}
-.card{background:var(--card);padding:1.5rem;border-radius:2rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);width:100%;max-width:950px}
-.screen{display:none}
-.active{display:block}
-label{font-weight:800;font-size:.9rem;margin-top:10px}
-input,select,textarea{width:100%;padding:8px;border:2px solid var(--border);border-radius:.6rem}
-.btn{min-height:45px;border:none;border-radius:.8rem;font-weight:800;cursor:pointer;margin-top:8px}
-.btn-p{background:var(--p);color:#fff}
-.btn-m{background:var(--mt);color:#fff}
-.btn-exam{background:var(--exam);color:#fff}
-.btn-del{background:#fee2e2;color:#b91c1c}
-.masked-word{font-size:3.5rem;font-weight:900;text-align:center;letter-spacing:.4rem;margin:1.5rem 0}
-.scroll{max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:10px}
-</style>
+        /* The Sacred Frame */
+        .sacred-container {
+            background: var(--cream);
+            width: 100%; max-width: 400px;
+            height: 720px;
+            border-radius: 190px 190px 45px 45px;
+            border: 6px solid var(--gold);
+            position: relative;
+            padding: 100px 24px 40px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+
+        /* 3D Beveled Buttons */
+        .btn-sacred {
+            background: linear-gradient(180deg, #FFFFFF 0%, #D4AF37 100%);
+            border: 2px solid #8A6D00;
+            color: var(--text-dark) !important;
+            font-weight: 900;
+            border-radius: 60px;
+            padding: 16px;
+            width: 100%;
+            box-shadow: 0 5px 0 #8A6D00;
+            transition: 0.1s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        .btn-sacred:active { transform: translateY(4px); box-shadow: 0 1px 0 #8A6D00; }
+
+        .admin-card {
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        /* Admin input fields */
+        .input-admin {
+            width: 100%; border: 1px solid #ccc; border-radius: 8px;
+            padding: 8px; margin-top: 5px; font-size: 0.9rem;
+        }
+    </style>
 </head>
-
 <body>
+    <div id="root"></div>
 
-<div class="card">
+    <script type="text/babel">
+        const { useState } = React;
 
-<!-- HOME -->
-<div id="home-screen" class="screen active">
-<h1 style="text-align:center">🌈 Rainbow Spelling Pro</h1>
+        function ZengitaApp() {
+            const [view, setView] = useState('student'); // 'student' or 'admin'
+            const [folders, setFolders] = useState([
+                { id: 1, name: "Chapter 1", slokas: ["1.1", "1.2"] },
+                { id: 2, name: "Chapter 2", slokas: ["2.1"] }
+            ]);
 
-<label>Student Name</label>
-<input id="studentName">
+            const handleAddSloka = (folderId) => {
+                const name = prompt("Enter Sloka number:");
+                if (name) {
+                    setFolders(folders.map(f => 
+                        f.id === folderId ? { ...f, slokas: [...f.slokas, name] } : f
+                    ));
+                }
+            };
 
-<label>Select List</label>
-<select id="yearSelect"></select>
+            const sortFolders = () => {
+                setFolders([...folders].reverse());
+            };
 
-<label>Time Limit</label>
-<select id="timeLimitSelect">
-<option value="300">5 Min</option>
-<option value="900">15 Min</option>
-<option value="1200">20 Min</option>
-</select>
+            return (
+                <div className="flex flex-col items-center">
+                    {/* Access Toggle */}
+                    <div className="mb-6 flex gap-4">
+                        <button 
+                            onClick={() => setView('student')} 
+                            className={`px-4 py-2 rounded-full font-bold text-xs ${view === 'student' ? 'bg-gold text-white' : 'bg-gray-700 text-gray-300'}`}>
+                            STUDENT VIEW
+                        </button>
+                        <button 
+                            onClick={() => setView('admin')} 
+                            className={`px-4 py-2 rounded-full font-bold text-xs ${view === 'admin' ? 'bg-red-800 text-white' : 'bg-gray-700 text-gray-300'}`}>
+                            ADMIN ACCESS
+                        </button>
+                    </div>
 
-<button class="btn btn-m" onclick="startSession('practice')">📖 Practice</button>
-<button class="btn btn-p" onclick="startSession('quiz')">🏆 Quiz</button>
-<button class="btn btn-exam" onclick="startSession('exam')">🎓 Exam</button>
+                    <main className="sacred-container">
+                        <header className="absolute top-14 left-0 right-0 text-center">
+                            <h1 style={{fontFamily: 'Playfair Display'}} className="text-4xl italic font-black text-[#5D0E11]">Zengita</h1>
+                        </header>
 
-<button class="btn" onclick="showAdmin()">Admin ⚙️</button>
-</div>
+                        {view === 'student' ? (
+                            <div className="mt-16 text-center animate-in fade-in duration-500">
+                                <h2 className="text-[#C5A028] font-black text-[10px] tracking-widest mb-10 uppercase">Student Dashboard</h2>
+                                <div className="grid grid-cols-2 gap-4 mb-10">
+                                    {folders.map(folder => (
+                                        <button key={folder.id} className="aspect-square bg-white border-2 border-gold/20 rounded-3xl flex flex-col items-center justify-center shadow-sm">
+                                            <span className="text-3xl mb-2">📙</span>
+                                            <span className="text-[10px] font-black text-maroon uppercase">{folder.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                                
+                                <section className="bg-white border-2 border-gold/30 rounded-[30px] p-6 flex justify-between items-center shadow-sm">
+                                    <div className="text-left">
+                                        <p className="text-[9px] font-black text-gold uppercase tracking-widest">Growth</p>
+                                        <p className="font-bold text-lg text-maroon">4 Day Streak</p>
+                                    </div>
+                                    <span className="text-3xl">🔥</span>
+                                </section>
+                            </div>
+                        ) : (
+                            <div className="mt-10 animate-in slide-in-from-bottom duration-300">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-maroon font-black uppercase text-sm">Folder Manager</h2>
+                                    <button onClick={sortFolders} className="text-[10px] font-bold border border-maroon px-2 py-1 rounded">SORT ↓↑</button>
+                                </div>
+                                
+                                {folders.map(folder => (
+                                    <div key={folder.id} className="admin-card">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <span className="font-black text-maroon text-xs">{folder.name}</span>
+                                            <span className="text-[10px] bg-gold/10 text-gold px-2 py-1 rounded-full">{folder.slokas.length} Slokas</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            {folder.slokas.map((s, i) => (
+                                                <span key={i} className="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded">Sloka {s}</span>
+                                            ))}
+                                        </div>
+                                        <button 
+                                            onClick={() => handleAddSloka(folder.id)}
+                                            className="w-full py-2 bg-maroon text-white text-[10px] font-bold rounded-lg uppercase tracking-wider">
+                                            + Add Sloka to Folder
+                                        </button>
+                                    </div>
+                                ))}
+                                
+                                <button className="btn-sacred mt-4 !text-xs">Create New Chapter Folder</button>
+                            </div>
+                        )}
+                    </main>
+                </div>
+            );
+        }
 
-<!-- GAME -->
-<div id="game-screen" class="screen">
-<button class="btn btn-del" onclick="backToHome()">Exit</button>
-<div class="masked-word" id="wordDisplay"></div>
-<div id="sentenceDisplay"></div>
-<input id="gameInput" autocomplete="off" style="font-size:2rem;text-align:center">
-<button class="btn btn-p" onclick="speakWord()">🔊 Hear Word</button>
-<button class="btn" onclick="showHint()">Hint 💡</button>
-</div>
-
-<!-- RESULT -->
-<div id="result-screen" class="screen" style="text-align:center">
-<h2>Session Complete</h2>
-<div id="resultScore" style="font-size:4rem"></div>
-<button class="btn btn-p" onclick="backToHome()">Home</button>
-</div>
-
-<!-- ADMIN -->
-<div id="admin-screen" class="screen">
-<button class="btn btn-p" onclick="showHome()">⬅ Back</button>
-
-<label>New List</label>
-<input id="newCatName">
-<button class="btn btn-m" onclick="addCategory()">Add</button>
-
-<select id="adminYearSelect" onchange="renderAdminWords()"></select>
-<button class="btn btn-del" onclick="deleteCategory()">Delete List</button>
-
-<textarea id="bulkWordsArea" placeholder="Comma separated words"></textarea>
-<button class="btn btn-m" onclick="addBulkWords()">Bulk Add</button>
-
-<div class="scroll">
-<table>
-<tbody id="adminWordList"></tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-<script>
-/* ================= STORAGE ================= */
-const STORAGE_KEY = 'rainbow_spelling_core';
-let db = {};
-let history = JSON.parse(localStorage.getItem('rainbow_history_core')) || [];
-
-/* ================= LOAD JSON IF NEEDED ================= */
-async function loadInitialData(){
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if(saved){
-    db = JSON.parse(saved);
-    updateDropdowns();
-    return;
-  }
-
-  try{
-    const res = await fetch('./data/words.json');
-    db = await res.json();
-  }catch(e){
-    console.error('JSON load failed', e);
-    db = { "Reception": [] };
-  }
-
-  // Safety: force arrays
-  Object.keys(db).forEach(k=>{
-    if(!Array.isArray(db[k])) db[k] = [];
-  });
-
-  saveData();
-  updateDropdowns();
-}
-
-/* ================= CORE ================= */
-function saveData(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-  localStorage.setItem('rainbow_history_core', JSON.stringify(history));
-}
-
-function updateDropdowns(){
-  const cats = Object.keys(db);
-  yearSelect.innerHTML = `<option value="ALL">All</option>` + cats.map(c=>`<option>${c}</option>`).join('');
-  adminYearSelect.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
-}
-
-/* ================= GAME ================= */
-let sessionQueue=[], currentItem, score=0;
-
-function generateAutoMask(w){
-  return w.split('').map((c,i)=>i%2?'_':c).join(' ');
-}
-
-function startSession(){
-  const sel = yearSelect.value;
-  let pool=[];
-
-  if(sel==="ALL"){
-    Object.values(db).forEach(list=>{
-      if(Array.isArray(list)) pool = pool.concat(list);
-    });
-  }else{
-    pool = Array.isArray(db[sel]) ? [...db[sel]] : [];
-  }
-
-  if(!pool.length) return alert("List empty");
-
-  score=0;
-  sessionQueue = pool.sort(()=>Math.random()-.5);
-
-  showScreen('game-screen');
-  nextWord();
-}
-
-function nextWord(){
-  if(!sessionQueue.length) return endSession();
-  currentItem = sessionQueue.pop();
-  wordDisplay.textContent = currentItem.mask || generateAutoMask(currentItem.word);
-  sentenceDisplay.textContent = currentItem.sentence || "";
-  gameInput.value="";
-  gameInput.focus();
-}
-
-gameInput.addEventListener('input',()=>{
-  if(gameInput.value.trim().toLowerCase() === currentItem.word.toLowerCase()){
-    score+=10;
-    nextWord();
-  }
-});
-
-function endSession(){
-  showScreen('result-screen');
-  resultScore.textContent = score;
-  history.push({name:studentName.value||"Guest",score,date:new Date().toLocaleDateString()});
-  saveData();
-}
-
-/* ================= ADMIN ================= */
-function showAdmin(){
-  showScreen('admin-screen');
-  renderAdminWords();
-}
-
-function renderAdminWords(){
-  const cat = adminYearSelect.value;
-  adminWordList.innerHTML = (db[cat]||[]).map(w=>`
-    <tr><td>${w.word}</td></tr>
-  `).join('');
-}
-
-function addBulkWords(){
-  const cat = adminYearSelect.value;
-  bulkWordsArea.value.split(/[,\n]+/).forEach(w=>{
-    if(w.trim()) db[cat].push({word:w.trim(),sentence:"",mask:""});
-  });
-  bulkWordsArea.value="";
-  saveData();
-  renderAdminWords();
-}
-
-function addCategory(){
-  const v = newCatName.value.trim();
-  if(v && !db[v]){
-    db[v] = [];
-    newCatName.value="";
-    saveData();
-    updateDropdowns();
-  }
-}
-
-function deleteCategory(){
-  const c = adminYearSelect.value;
-  if(confirm(`Delete ${c}?`)){
-    delete db[c];
-    saveData();
-    updateDropdowns();
-  }
-}
-
-/* ================= NAV ================= */
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function showHome(){ showScreen('home-screen'); }
-function backToHome(){ showHome(); }
-function speakWord(){ speechSynthesis.speak(new SpeechSynthesisUtterance(currentItem.word)); }
-function showHint(){ alert(currentItem.word.toUpperCase()); }
-
-/* ================= INIT ================= */
-loadInitialData();
-</script>
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ZengitaApp />);
+    </script>
 </body>
 </html>
